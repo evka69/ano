@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Заказ №<span th:text="${order.id}">1</span> - Админка</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}" />
+</head>
+<body>
+<h1>Заказ №<span th:text="${order.id}">1</span></h1>
+
+<p><strong>Пользователь:</strong> <span th:text="${order.user.username}"></span></p>
+<p><strong>Дата:</strong> <span th:text="${#temporals.format(order.createdAt, 'dd.MM.yyyy HH:mm')}"></span></p>
+<p><strong>Адрес доставки:</strong> <span th:text="${order.deliveryAddress}"></span></p>
+<p><strong>Оплата:</strong> <span th:text="${order.paymentMethod == 'CASH' ? 'Наличными' : 'Картой'}"></span></p>
+<p><strong>Комментарий:</strong> <span th:text="${order.comment != null ? order.comment : 'Отсутствует'}"></span></p>
+<p><strong>Сумма:</strong> <span th:text="${order.totalAmount}"></span></p>
+
+<h2>Товары</h2>
+<table>
+    <thead>
+    <tr>
+        <th>Название</th>
+        <th>Количество</th>
+        <th>Цена</th>
+        <th>Итого</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item : ${order.items}">
+        <td th:text="${item.product.name}"></td>
+        <td th:text="${item.quantity}"></td>
+        <td th:text="${item.price}"></td>
+        <td th:text="${item.totalPrice}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<h2>Изменить статус заказа</h2>
+<form th:action="@{'/admin/orders/' + ${order.id} + '/status'}" method="post">
+    <select name="status" th:field="*{status}">
+        <option th:each="st : ${statuses}" th:value="${st}" th:text="${st}" th:selected="${st == order.status}"></option>
+    </select>
+    <button type="submit">Обновить</button>
+</form>
+
+<p><a href="/admin/orders">← Назад к списку заказов</a></p>
+
+</body>
+</html>
